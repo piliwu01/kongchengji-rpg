@@ -106,7 +106,7 @@ body { font-family: 'Noto Serif TC', serif; color: #f0e6d3; user-select: none; }
 .fc-btn.defend-btn { border-color:#22aabb; color:#44ccdd; }
 .fc-btn.defend-btn:hover:not(:disabled) { background:#22aabb; color:#000; }
 /* 計略列表 */
-.fc-tactic-list { display:flex; flex-direction:column; gap:4px; max-height:clamp(100px,24vw,150px); overflow-y:auto; }
+.fc-tactic-list { display:flex; flex-direction:column; gap:4px; }
 .fc-tactic-btn { background:#000; border:2px solid #6644cc; color:#aabbff; padding:6px 10px; font-family:'Noto Sans TC',sans-serif; font-size:clamp(11px,2.8vw,13px); cursor:pointer; display:flex; flex-direction:column; gap:2px; transition:all .1s; }
 .fc-tactic-btn:hover:not(:disabled) { background:#6644cc; color:#fff; }
 .fc-tactic-btn:disabled { opacity:.3; cursor:default; }
@@ -114,8 +114,8 @@ body { font-family: 'Noto Serif TC', serif; color: #f0e6d3; user-select: none; }
 .fc-tactic-row1 { display:flex; justify-content:space-between; align-items:center; }
 .fc-tactic-cost { color:#8866cc; font-family:'Courier New',monospace; font-size:clamp(10px,2.5vw,12px); }
 /* 技能效果說明 */
-.fc-tactic-desc { font-size:clamp(9px,2.2vw,11px); color:#7788aa; line-height:1.3; text-align:left; }
-.fc-tactic-btn:hover:not(:disabled) .fc-tactic-desc { color:#ccddff; }
+.fc-tactic-desc { font-size:clamp(10px,2.5vw,12px); color:#99aacc; line-height:1.4; text-align:left; margin-top:2px; }
+.fc-tactic-btn:hover:not(:disabled) .fc-tactic-desc { color:#ddeeff; }
 .fc-tactic-btn:hover:not(:disabled) .fc-tactic-cost { color:#cc99ff; }
 .fc-target-list { display:flex; flex-direction:column; gap:4px; }
 .fc-target-btn { background:#000; border:2px solid #cc4422; color:#ffaa88; padding:8px 10px; font-family:'Noto Sans TC',sans-serif; font-size:13px; cursor:pointer; display:flex; justify-content:space-between; transition:all .1s; }
