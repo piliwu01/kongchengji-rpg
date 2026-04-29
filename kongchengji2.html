@@ -7,9 +7,23 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@700;900&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; overflow: hidden; background: #050505; }
+html, body { height: 100%; overflow: hidden; background: #0a0500; }
+/* 桌機/平板：在遊戲視窗外顯示裝飾底色 */
+body::before { content:''; position:fixed; inset:0; background:radial-gradient(ellipse at 50% 40%, #1a0a00 0%, #000 80%); z-index:-1; }
 body { font-family: 'Noto Serif TC', serif; color: #f0e6d3; user-select: none; }
-#app { width: 100%; max-width: 480px; height: 100vh; margin: 0 auto; position: relative; display: flex; flex-direction: column; overflow: hidden; }
+/* 響應式容器：最寬 640px，在大螢幕置中 */
+#app {
+  width: 100%;
+  max-width: clamp(320px, 100vw, 640px);
+  height: 100dvh;
+  height: 100vh;   /* fallback */
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 0 60px rgba(200,100,0,.15);
+}
 
 /* ─── TITLE ─── */
 .title-wrap { position: relative; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
@@ -38,40 +52,39 @@ body { font-family: 'Noto Serif TC', serif; color: #f0e6d3; user-select: none; }
 
 /* 角色列表區 */
 .fc-rows { flex:1; display:flex; flex-direction:column; justify-content:space-around; padding:4px 0; overflow:hidden; }
-/* 4欄：[左側人物圖 52px] [玩家資訊 1fr] [敵方資訊 1fr] [右側人物圖 52px] */
-.fc-row { display:grid; grid-template-columns:52px 1fr 1fr 52px; align-items:stretch; min-height:0; border-bottom:1px solid #1a1a1a; }
+/* 4欄：[左側人物圖] [玩家資訊 1fr] [敵方資訊 1fr] [右側人物圖] — 響應式 clamp */
+.fc-row { display:grid; grid-template-columns:clamp(44px,10vw,72px) 1fr 1fr clamp(44px,10vw,72px); align-items:stretch; min-height:0; border-bottom:1px solid #1a1a1a; }
 .fc-row:last-child { border-bottom:none; }
 .fc-row.is-active-row { background:rgba(232,160,32,.08); outline:1px solid #e8a020; outline-offset:-1px; }
 
 /* 外側人物大圖欄 */
-.fc-portrait-col { display:flex; align-items:center; justify-content:center; padding:2px; }
+.fc-portrait-col   { display:flex; align-items:center; justify-content:center; padding:2px; border-right:1px solid #1a1a1a; }
 .fc-portrait-col-r { display:flex; align-items:center; justify-content:center; padding:2px; border-left:1px solid #1a1a1a; }
-.fc-portrait-col { border-right:1px solid #1a1a1a; }
-.fc-sprite { width:48px; height:56px; object-fit:contain; object-position:center bottom; image-rendering:pixelated; image-rendering:crisp-edges; display:block; background:transparent; }
+.fc-sprite    { width:clamp(40px,9vw,68px); height:clamp(46px,11vw,80px); object-fit:contain; object-position:center bottom; image-rendering:pixelated; image-rendering:crisp-edges; display:block; background:transparent; }
 .fc-sprite.flip { transform:scaleX(-1); }
-.fc-sprite-ph { width:48px; height:56px; background:#111; display:flex; align-items:center; justify-content:center; font-size:20px; }
+.fc-sprite-ph { width:clamp(40px,9vw,68px); height:clamp(46px,11vw,80px); background:#111; display:flex; align-items:center; justify-content:center; font-size:clamp(16px,4vw,24px); }
 
 /* 玩家側（左中）/ 敵方側（右中）資訊欄 */
-.fc-pinfo { display:flex; flex-direction:column; gap:2px; align-items:flex-start; padding:4px 5px; justify-content:center; }
-.fc-einfo { display:flex; flex-direction:column; gap:2px; align-items:flex-end;   padding:4px 5px; justify-content:center; }
+.fc-pinfo { display:flex; flex-direction:column; gap:2px; align-items:flex-start; padding:clamp(3px,1vw,6px) clamp(4px,1.2vw,8px); justify-content:center; }
+.fc-einfo { display:flex; flex-direction:column; gap:2px; align-items:flex-end;   padding:clamp(3px,1vw,6px) clamp(4px,1.2vw,8px); justify-content:center; }
 
 /* 資訊欄內的小頭像（血條上方）*/
-.fc-face    { width:28px; height:28px; object-fit:contain; object-position:center; border:1px solid #555; display:block; image-rendering:pixelated; image-rendering:crisp-edges; margin-bottom:2px; background:transparent; }
-.fc-face-ph { width:28px; height:28px; background:#1a1a1a; border:1px solid #333; display:flex; align-items:center; justify-content:center; font-size:13px; margin-bottom:2px; }
+.fc-face    { width:clamp(22px,6vw,36px); height:clamp(22px,6vw,36px); object-fit:contain; object-position:center; border:1px solid #555; display:block; image-rendering:pixelated; image-rendering:crisp-edges; margin-bottom:2px; background:transparent; }
+.fc-face-ph { width:clamp(22px,6vw,36px); height:clamp(22px,6vw,36px); background:#1a1a1a; border:1px solid #333; display:flex; align-items:center; justify-content:center; font-size:clamp(11px,3vw,16px); margin-bottom:2px; }
 .fc-einfo .fc-face, .fc-einfo .fc-face-ph { margin-left:auto; }
 
-.fc-name  { font-size:12px; color:#fff; font-weight:700; font-family:'Noto Sans TC',sans-serif; line-height:1.2; white-space:nowrap; }
+.fc-name  { font-size:clamp(10px,3vw,14px); color:#fff; font-weight:700; font-family:'Noto Sans TC',sans-serif; line-height:1.2; white-space:nowrap; }
 .fc-name.dead { color:#444; }
-.fc-hpnum { font-size:10px; color:#888; font-family:'Courier New',monospace; line-height:1; }
+.fc-hpnum { font-size:clamp(9px,2.5vw,12px); color:#888; font-family:'Courier New',monospace; line-height:1; }
 .fc-hpnum.dead { color:#333; }
-.fc-bar-wrap { width:100%; height:8px; background:#111; border:1px solid #333; border-radius:1px; }
+.fc-bar-wrap { width:100%; height:clamp(6px,1.5vw,10px); background:#111; border:1px solid #333; border-radius:1px; }
 .fc-bar-p { height:100%; background:linear-gradient(90deg,#e8a020,#ffcc44); transition:width .45s ease; border-radius:1px; }  /* 橘黃 = 玩家 */
 .fc-bar-e { height:100%; background:linear-gradient(90deg,#4422aa,#8866ee); transition:width .45s ease; border-radius:1px; }  /* 紫 = 敵方 */
 .fc-bar-dead { background:#222 !important; }
 
 /* 下方文字框 + 頭像 */
-.fc-bottom { display:flex; gap:6px; padding:6px; background:#000; border-top:2px solid #fff; flex-shrink:0; height:82px; }
-.fc-textbox { flex:1; background:#000; border:2px solid #fff; padding:5px 8px; color:#fff; font-size:13px; font-family:'Noto Sans TC',sans-serif; line-height:1.65; overflow:hidden; display:flex; flex-direction:column; justify-content:flex-end; }
+.fc-bottom { display:flex; gap:6px; padding:6px; background:#000; border-top:2px solid #fff; flex-shrink:0; height:clamp(72px,16vw,100px); }
+.fc-textbox { flex:1; background:#000; border:2px solid #fff; padding:5px 8px; color:#fff; font-size:clamp(11px,3vw,14px); font-family:'Noto Sans TC',sans-serif; line-height:1.65; overflow:hidden; display:flex; flex-direction:column; justify-content:flex-end; }
 .fc-textbox-line { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .fc-textbox-line.log-atk    { color:#ffcc44; }
 .fc-textbox-line.log-tactic { color:#88aaff; }
@@ -82,17 +95,28 @@ body { font-family: 'Noto Serif TC', serif; color: #f0e6d3; user-select: none; }
 
 /* 指令選單（覆蓋在底部） */
 .fc-cmd { position:absolute; bottom:0; left:0; right:0; background:#000; border-top:2px solid #fff; padding:7px 8px; z-index:100; }
-.fc-cmd-who { font-size:11px; color:#e8a020; font-family:'Noto Sans TC',sans-serif; text-align:center; margin-bottom:5px; letter-spacing:1px; }
+.fc-cmd-who { font-size:clamp(10px,2.5vw,13px); color:#e8a020; font-family:'Noto Sans TC',sans-serif; text-align:center; margin-bottom:5px; letter-spacing:1px; }
 .fc-cmd-who em { color:#fff; font-style:normal; font-weight:700; }
-.fc-cmd-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px; }
-.fc-btn { background:#000; border:2px solid #fff; color:#fff; padding:8px 4px; font-family:'Noto Sans TC',sans-serif; font-size:13px; cursor:pointer; text-align:center; transition:all .1s; letter-spacing:1px; }
+/* 主指令：2×2 格線（攻擊、計略、防守、撤退）*/
+.fc-cmd-grid { display:grid; grid-template-columns:1fr 1fr; gap:5px; }
+.fc-btn { background:#000; border:2px solid #fff; color:#fff; padding:clamp(6px,1.5vw,10px) 4px; font-family:'Noto Sans TC',sans-serif; font-size:clamp(12px,3vw,15px); cursor:pointer; text-align:center; transition:all .1s; letter-spacing:1px; }
 .fc-btn:hover:not(:disabled) { background:#fff; color:#000; }
 .fc-btn:disabled { border-color:#444; color:#444; cursor:default; }
-.fc-tactic-list { display:flex; flex-direction:column; gap:4px; max-height:120px; overflow-y:auto; }
-.fc-tactic-btn { background:#000; border:2px solid #6644cc; color:#aabbff; padding:7px 10px; font-family:'Noto Sans TC',sans-serif; font-size:12px; cursor:pointer; display:flex; justify-content:space-between; transition:all .1s; }
+/* 防守按鈕：藍綠色 */
+.fc-btn.defend-btn { border-color:#22aabb; color:#44ccdd; }
+.fc-btn.defend-btn:hover:not(:disabled) { background:#22aabb; color:#000; }
+/* 計略列表 */
+.fc-tactic-list { display:flex; flex-direction:column; gap:4px; max-height:clamp(100px,24vw,150px); overflow-y:auto; }
+.fc-tactic-btn { background:#000; border:2px solid #6644cc; color:#aabbff; padding:6px 10px; font-family:'Noto Sans TC',sans-serif; font-size:clamp(11px,2.8vw,13px); cursor:pointer; display:flex; flex-direction:column; gap:2px; transition:all .1s; }
 .fc-tactic-btn:hover:not(:disabled) { background:#6644cc; color:#fff; }
 .fc-tactic-btn:disabled { opacity:.3; cursor:default; }
-.fc-tactic-cost { color:#8866cc; font-family:'Courier New',monospace; }
+/* 計略按鈕頂部行（名稱 + 費用）*/
+.fc-tactic-row1 { display:flex; justify-content:space-between; align-items:center; }
+.fc-tactic-cost { color:#8866cc; font-family:'Courier New',monospace; font-size:clamp(10px,2.5vw,12px); }
+/* 技能效果說明 */
+.fc-tactic-desc { font-size:clamp(9px,2.2vw,11px); color:#7788aa; line-height:1.3; text-align:left; }
+.fc-tactic-btn:hover:not(:disabled) .fc-tactic-desc { color:#ccddff; }
+.fc-tactic-btn:hover:not(:disabled) .fc-tactic-cost { color:#cc99ff; }
 .fc-target-list { display:flex; flex-direction:column; gap:4px; }
 .fc-target-btn { background:#000; border:2px solid #cc4422; color:#ffaa88; padding:8px 10px; font-family:'Noto Sans TC',sans-serif; font-size:13px; cursor:pointer; display:flex; justify-content:space-between; transition:all .1s; }
 .fc-target-btn:hover { background:#cc4422; color:#fff; }
@@ -458,13 +482,17 @@ function buildFCCmd() {
   if (!actor||!actor.alive) return '';
   if (G.cmdMode==='tactics') {
     const btns = actor.tactics.map(tid => {
-      const t = TACTICS_DEF[tid]; const ok = actor.mp>=t.cost;
+      const t = TACTICS_DEF[tid]; const ok = actor.mp >= t.cost;
       return `<button class="fc-tactic-btn" ${ok?'':'disabled'} onclick="doTactic('${tid}')">
-        <span>${t.name}</span><span class="fc-tactic-cost">軍師${t.cost}</span>
+        <div class="fc-tactic-row1">
+          <span>${t.name}</span>
+          <span class="fc-tactic-cost">策略 ${t.cost}</span>
+        </div>
+        <div class="fc-tactic-desc">${t.desc}</div>
       </button>`;
     }).join('');
     return `<div class="fc-cmd">
-      <div class="fc-cmd-who">計略 ─ <em>${actor.name}</em> 軍師:${actor.mp}</div>
+      <div class="fc-cmd-who">計略 ─ <em>${actor.name}</em> 策略值:${actor.mp}/${actor.maxMp}</div>
       <div class="fc-tactic-list">${btns}</div>
       <div class="fc-back"><button class="fc-back-btn" onclick="setCmd('main')">← 返回</button></div>
     </div>`;
@@ -481,12 +509,14 @@ function buildFCCmd() {
     </div>`;
   }
   const hasTactics = actor.tactics.length>0 && actor.maxMp>0;
-  const mpStr = actor.maxMp>0 ? ` 軍師:${actor.mp}` : '';
+  const mpStr = actor.maxMp>0 ? ` 策略:${actor.mp}` : '';
+  const canDefend = actor.maxMp>0 && actor.mp < actor.maxMp;
   return `<div class="fc-cmd">
     <div class="fc-cmd-who"><em>${actor.name}</em>${mpStr} の番</div>
     <div class="fc-cmd-grid">
       <button class="fc-btn" onclick="setCmd('target')">攻 擊</button>
       <button class="fc-btn" ${hasTactics?'':'disabled'} onclick="setCmd('tactics')">計 略</button>
+      <button class="fc-btn defend-btn" ${canDefend?'':'disabled'} onclick="doDefend()">防 守</button>
       <button class="fc-btn" onclick="doRetreat()">撤 退</button>
     </div>
   </div>`;
@@ -677,6 +707,34 @@ function doRetreat() {
     log('此戰不可撤退！', 'log-system');
     refreshPartial();
   }
+}
+
+function doDefend() {
+  if (G.phase!=='player' || G.busy) return;
+  const actor = G.players[G.playerIdx];
+  if (actor.mp >= actor.maxMp) return;
+
+  const gain = Math.min(10, actor.maxMp - actor.mp);
+  actor.mp += gain;
+
+  log(`🛡 ${actor.name} 防守！恢復 ${gain} 策略值（${actor.mp}/${actor.maxMp}）`, 'log-system');
+
+  // 防守閃光動畫：藍綠色高亮
+  const sprEl = document.getElementById('sprite-' + actor.key);
+  if (sprEl) {
+    sprEl.style.filter = 'brightness(1.8) hue-rotate(140deg)';
+    setTimeout(() => { sprEl.style.filter = ''; }, 350);
+  }
+
+  G.cmdMode = 'main';
+  refreshPartial();
+
+  setTimeout(() => {
+    checkIntrudesThen(() => {
+      if (checkEnd()) return;
+      advancePlayerIdx();
+    });
+  }, 450);
 }
 
 // ════════════════════════
