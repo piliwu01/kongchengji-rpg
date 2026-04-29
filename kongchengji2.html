@@ -37,28 +37,37 @@ body { font-family: 'Noto Serif TC', serif; color: #f0e6d3; user-select: none; }
 .fc-header .fc-stage { color:#e8a020; font-weight:700; }
 
 /* 角色列表區 */
-.fc-rows { flex:1; display:flex; flex-direction:column; justify-content:space-around; padding:6px 0; overflow:hidden; }
-.fc-row { display:grid; grid-template-columns:1fr 52px 1fr; align-items:center; padding:3px 8px; min-height:0; border-bottom:1px solid #111; }
+.fc-rows { flex:1; display:flex; flex-direction:column; justify-content:space-around; padding:4px 0; overflow:hidden; }
+/* 4欄：[左側人物圖 52px] [玩家資訊 1fr] [敵方資訊 1fr] [右側人物圖 52px] */
+.fc-row { display:grid; grid-template-columns:52px 1fr 1fr 52px; align-items:stretch; min-height:0; border-bottom:1px solid #1a1a1a; }
 .fc-row:last-child { border-bottom:none; }
-.fc-row.is-active-row { background:rgba(232,160,32,.1); border-left:3px solid #e8a020; }
+.fc-row.is-active-row { background:rgba(232,160,32,.08); outline:1px solid #e8a020; outline-offset:-1px; }
 
-/* 玩家側（左） */
-.fc-pinfo { display:flex; flex-direction:column; gap:1px; align-items:flex-start; }
-.fc-einfo { display:flex; flex-direction:column; gap:1px; align-items:flex-end; }
-.fc-name  { font-size:13px; color:#fff; font-weight:700; font-family:'Noto Sans TC',sans-serif; line-height:1.2; white-space:nowrap; }
-.fc-name.dead { color:#444; }
-.fc-hpnum { font-size:11px; color:#aaa; font-family:'Courier New',monospace; line-height:1; }
-.fc-hpnum.dead { color:#333; }
-.fc-bar-wrap { width:100%; height:7px; background:#111; border:1px solid #333; }
-.fc-bar-p { height:100%; background:#e8a020; transition:width .45s ease; }   /* 橘 = 玩家 */
-.fc-bar-e { height:100%; background:#6644cc; transition:width .45s ease; }   /* 紫 = 敵方 */
-.fc-bar-dead { background:#333 !important; }
-
-/* 中央小圖 */
-.fc-sprite-wrap { display:flex; align-items:center; justify-content:center; }
-.fc-sprite { width:46px; height:46px; object-fit:cover; object-position:top; image-rendering:pixelated; border:1px solid #333; display:block; }
+/* 外側人物大圖欄 */
+.fc-portrait-col { display:flex; align-items:center; justify-content:center; padding:2px; }
+.fc-portrait-col-r { display:flex; align-items:center; justify-content:center; padding:2px; border-left:1px solid #1a1a1a; }
+.fc-portrait-col { border-right:1px solid #1a1a1a; }
+.fc-sprite { width:48px; height:52px; object-fit:cover; object-position:top; image-rendering:pixelated; display:block; }
 .fc-sprite.flip { transform:scaleX(-1); }
-.fc-sprite-ph { width:46px; height:46px; background:#111; border:1px solid #333; display:flex; align-items:center; justify-content:center; font-size:18px; }
+.fc-sprite-ph { width:48px; height:52px; background:#111; display:flex; align-items:center; justify-content:center; font-size:20px; }
+
+/* 玩家側（左中）/ 敵方側（右中）資訊欄 */
+.fc-pinfo { display:flex; flex-direction:column; gap:2px; align-items:flex-start; padding:4px 5px; justify-content:center; }
+.fc-einfo { display:flex; flex-direction:column; gap:2px; align-items:flex-end;   padding:4px 5px; justify-content:center; }
+
+/* 資訊欄內的小頭像（血條上方）*/
+.fc-face    { width:26px; height:26px; object-fit:cover; object-position:top; border:1px solid #444; display:block; image-rendering:pixelated; margin-bottom:1px; }
+.fc-face-ph { width:26px; height:26px; background:#1a1a1a; border:1px solid #333; display:flex; align-items:center; justify-content:center; font-size:13px; margin-bottom:1px; }
+.fc-einfo .fc-face, .fc-einfo .fc-face-ph { margin-left:auto; }
+
+.fc-name  { font-size:12px; color:#fff; font-weight:700; font-family:'Noto Sans TC',sans-serif; line-height:1.2; white-space:nowrap; }
+.fc-name.dead { color:#444; }
+.fc-hpnum { font-size:10px; color:#888; font-family:'Courier New',monospace; line-height:1; }
+.fc-hpnum.dead { color:#333; }
+.fc-bar-wrap { width:100%; height:8px; background:#111; border:1px solid #333; border-radius:1px; }
+.fc-bar-p { height:100%; background:linear-gradient(90deg,#e8a020,#ffcc44); transition:width .45s ease; border-radius:1px; }  /* 橘黃 = 玩家 */
+.fc-bar-e { height:100%; background:linear-gradient(90deg,#4422aa,#8866ee); transition:width .45s ease; border-radius:1px; }  /* 紫 = 敵方 */
+.fc-bar-dead { background:#222 !important; }
 
 /* 下方文字框 + 頭像 */
 .fc-bottom { display:flex; gap:6px; padding:6px; background:#000; border-top:2px solid #fff; flex-shrink:0; height:82px; }
@@ -150,6 +159,10 @@ const IMG = {
   zhangHe:  'char_zhangHe_20260429_095455.png',
   dengAi:   'char_dengAi_20260429_095604.png',
   jieting:  'bg_jieting_20260429_095427.png',
+  tongziA:  'char_tongziA_20260429_143625.png',
+  tongziB:  'char_tongziB_20260429_143626.png',
+  weiA:     'char_weiA_20260429_143632.png',
+  weiB:     'char_weiB_20260429_143632.png',
 };
 
 // ════════════════════════
@@ -157,14 +170,14 @@ const IMG = {
 // ════════════════════════
 const CHAR_BASE = {
   zhuge:    { name:'諸葛亮', maxHp:270, atk:42, def:28, maxMp:60, img:IMG.zhuge,    tactics:['kongchengji','yibing','bagua'] },
-  tongziA:  { name:'書童甲', maxHp:170, atk:55, def:20, maxMp:0,  img:null,         tactics:[] },
-  tongziB:  { name:'書童乙', maxHp:150, atk:50, def:18, maxMp:0,  img:null,         tactics:[] },
+  tongziA:  { name:'書童甲', maxHp:170, atk:55, def:20, maxMp:0,  img:IMG.tongziA,  tactics:[] },
+  tongziB:  { name:'書童乙', maxHp:150, atk:50, def:18, maxMp:0,  img:IMG.tongziB,  tactics:[] },
   zhaoYun:  { name:'趙雲',   maxHp:350, atk:88, def:50, maxMp:0,  img:IMG.zhaoYun,  tactics:[] },
   jiangWei: { name:'姜維',   maxHp:290, atk:72, def:38, maxMp:30, img:IMG.jiangWei, tactics:['huogong'] },
   maDai:    { name:'馬岱',   maxHp:240, atk:68, def:33, maxMp:0,  img:IMG.maDai,    tactics:[] },
   simayi:   { name:'司馬懿', maxHp:380, atk:60, def:35, maxMp:30, img:IMG.simayi,   tactics:['qiangong'] },
-  weiA:     { name:'魏軍甲', maxHp:155, atk:44, def:18, maxMp:0,  img:null,         tactics:[] },
-  weiB:     { name:'魏軍乙', maxHp:140, atk:40, def:15, maxMp:0,  img:null,         tactics:[] },
+  weiA:     { name:'魏軍甲', maxHp:155, atk:44, def:18, maxMp:0,  img:IMG.weiA,     tactics:[] },
+  weiB:     { name:'魏軍乙', maxHp:140, atk:40, def:15, maxMp:0,  img:IMG.weiB,     tactics:[] },
   zhangHe:  { name:'張郃',   maxHp:310, atk:82, def:42, maxMp:0,  img:IMG.zhangHe,  tactics:[] },
   dengAi:   { name:'鄧艾',   maxHp:270, atk:62, def:38, maxMp:0,  img:IMG.dengAi,   tactics:['yuancheng'] },
 };
@@ -368,32 +381,59 @@ function buildFCRows() {
     const e = G.enemies[i] || null;
     const isActive = G.phase==='player' && p && G.players[G.playerIdx]===p;
     html += `<div class="fc-row${isActive?' is-active-row':''}">`;
-    // 玩家側（左）
+
+    // ── 欄1：玩家大圖（最左） ──
     if (p) {
-      const barW = Math.round(clamp(p.hp/p.maxHp,0,1)*100);
+      const pImg = p.img
+        ? `<img src="${p.img}" class="fc-sprite" id="sprite-${p.key}">`
+        : `<div class="fc-sprite-ph" id="sprite-${p.key}">🛡</div>`;
+      html += `<div class="fc-portrait-col">${pImg}</div>`;
+    } else {
+      html += `<div class="fc-portrait-col"></div>`;
+    }
+
+    // ── 欄2：玩家資訊（小頭像 + 名字 + 血條） ──
+    if (p) {
+      const barW = Math.round(clamp(p.hp / p.maxHp, 0, 1) * 100);
+      const face  = p.img
+        ? `<img class="fc-face" src="${p.img}">`
+        : `<div class="fc-face-ph">🛡</div>`;
       html += `<div class="fc-pinfo">
+        ${face}
         <span class="fc-name${p.alive?'':' dead'}">${p.name}</span>
         <span class="fc-hpnum${p.alive?'':' dead'}" id="hpn-${p.key}">${p.hp}</span>
         <div class="fc-bar-wrap"><div class="fc-bar-p${p.alive?'':' fc-bar-dead'}" id="hpf-${p.key}" style="width:${barW}%"></div></div>
       </div>`;
-    } else { html += `<div></div>`; }
-    // 中央圖
-    const sc = p || e;
-    if (sc?.img) {
-      const flipCls = (!p && e) ? ' flip' : '';
-      html += `<div class="fc-sprite-wrap"><img src="${sc.img}" class="fc-sprite${flipCls}" id="sprite-${sc.key}"></div>`;
     } else {
-      html += `<div class="fc-sprite-wrap"><div class="fc-sprite-ph" id="sprite-${sc?.key||'x'}">${p?'🛡':'⚔'}</div></div>`;
+      html += `<div></div>`;
     }
-    // 敵方側（右）
+
+    // ── 欄3：敵方資訊（小頭像 + 名字 + 血條，右對齊） ──
     if (e) {
-      const barW = Math.round(clamp(e.hp/e.maxHp,0,1)*100);
+      const barW = Math.round(clamp(e.hp / e.maxHp, 0, 1) * 100);
+      const face  = e.img
+        ? `<img class="fc-face" src="${e.img}">`
+        : `<div class="fc-face-ph">⚔</div>`;
       html += `<div class="fc-einfo">
+        ${face}
         <span class="fc-name${e.alive?'':' dead'}">${e.name}</span>
         <span class="fc-hpnum${e.alive?'':' dead'}" id="hpn-${e.key}">${e.hp}</span>
         <div class="fc-bar-wrap"><div class="fc-bar-e${e.alive?'':' fc-bar-dead'}" id="hpf-${e.key}" style="width:${barW}%"></div></div>
       </div>`;
-    } else { html += `<div></div>`; }
+    } else {
+      html += `<div></div>`;
+    }
+
+    // ── 欄4：敵方大圖（最右，左右翻轉） ──
+    if (e) {
+      const eImg = e.img
+        ? `<img src="${e.img}" class="fc-sprite flip" id="sprite-${e.key}">`
+        : `<div class="fc-sprite-ph" id="sprite-${e.key}">⚔</div>`;
+      html += `<div class="fc-portrait-col-r">${eImg}</div>`;
+    } else {
+      html += `<div class="fc-portrait-col-r"></div>`;
+    }
+
     html += `</div>`;
   }
   return html;
