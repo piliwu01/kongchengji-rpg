@@ -162,8 +162,8 @@ const IMG = {
   dengAi:   'px_dengAi.png',
   tongziA:  'px_tongziA.png',
   tongziB:  'px_tongziB.png',
-  weiA:     'px_weiA.png',
-  weiB:     'px_weiB.png',
+  simashi:  'px_simashi.png',
+  simazhao: 'px_simazhao.png',
 };
 
 // ════════════════════════
@@ -177,8 +177,8 @@ const CHAR_BASE = {
   jiangWei: { name:'姜維',   maxHp:290, atk:72, def:38, maxMp:30, img:IMG.jiangWei, tactics:['huogong'] },
   maDai:    { name:'馬岱',   maxHp:240, atk:68, def:33, maxMp:0,  img:IMG.maDai,    tactics:[] },
   simayi:   { name:'司馬懿', maxHp:380, atk:60, def:35, maxMp:30, img:IMG.simayi,   tactics:['qiangong'] },
-  weiA:     { name:'魏軍甲', maxHp:155, atk:44, def:18, maxMp:0,  img:IMG.weiA,     tactics:[] },
-  weiB:     { name:'魏軍乙', maxHp:140, atk:40, def:15, maxMp:0,  img:IMG.weiB,     tactics:[] },
+  simashi:  { name:'司馬師', maxHp:280, atk:58, def:36, maxMp:0,  img:IMG.simashi,  tactics:[] },
+  simazhao: { name:'司馬昭', maxHp:260, atk:62, def:32, maxMp:0,  img:IMG.simazhao, tactics:[] },
   zhangHe:  { name:'張郃',   maxHp:310, atk:82, def:42, maxMp:0,  img:IMG.zhangHe,  tactics:[] },
   dengAi:   { name:'鄧艾',   maxHp:270, atk:62, def:38, maxMp:0,  img:IMG.dengAi,   tactics:['yuancheng'] },
 };
@@ -587,7 +587,7 @@ function initBattle(stageKey) {
   G.buffs = { playerDef:0, enemyAtk:0, kongEffect:false };
   G.busy  = false;
   G.players = ['zhuge','tongziA','tongziB'].map(makeChar);
-  G.enemies = ['weiA','simayi','weiB'].map(makeChar);
+  G.enemies = ['simashi','simayi','simazhao'].map(makeChar);
 
   // reset intrude flags
   if (INTRUDES[stageKey]) INTRUDES[stageKey].forEach(r => r.done=false);
