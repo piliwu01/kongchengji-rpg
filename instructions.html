@@ -183,6 +183,21 @@
   .ending-name { font-weight: 700; margin-bottom: 2px; }
   .ending-cond { color: #665544; font-size: 12px; }
 
+  /* ── Event pills ── */
+  .ev-list { display:flex; flex-direction:column; gap:6px; }
+  .ev-item {
+    display:flex; align-items:flex-start; gap:10px;
+    padding:8px 12px; border-radius:2px;
+    font-size:clamp(12px,3.2vw,13px); line-height:1.5;
+  }
+  .ev-good    { background:rgba(20,100,40,.2);  border-left:3px solid #44ee77; }
+  .ev-bad     { background:rgba(120,20,20,.2);  border-left:3px solid #ff6655; }
+  .ev-neutral { background:rgba(80,70,10,.2);   border-left:3px solid #ffcc44; }
+  .ev-icon  { font-size:18px; flex-shrink:0; }
+  .ev-name  { font-weight:700; margin-bottom:2px; }
+  .ev-desc  { color:#7a6a5a; font-size:12px; }
+  .ev-dur   { margin-left:auto; font-size:11px; color:#5a4a3a; white-space:nowrap; padding-left:8px; flex-shrink:0; }
+
   /* ── Intrude badge ── */
   .badge {
     display: inline-block;
@@ -351,6 +366,80 @@
     </div>
   </div>
 
+  <!-- 隨機事件 -->
+  <div class="section">
+    <div class="section-head">⚡ 隨機事件系統</div>
+    <div class="section-body">
+      <p style="font-size:12px;color:#7a6a5a;margin-bottom:12px;line-height:1.6;">每回合結束時有 <strong style="color:#c8963e">45%</strong> 機率觸發一個隨機事件，影響本回合的攻防數值。事件會顯示在戰場橫幅，注意顏色判斷好壞！</p>
+      <div class="ev-list">
+
+        <div class="ev-item ev-good">
+          <div class="ev-icon">⛰️</div>
+          <div style="flex:1"><div class="ev-name">地利我方</div><div class="ev-desc">我方攻擊 +25%</div></div>
+          <div class="ev-dur">持續 2 回</div>
+        </div>
+        <div class="ev-item ev-good">
+          <div class="ev-icon">🔥</div>
+          <div style="flex:1"><div class="ev-name">士氣大振</div><div class="ev-desc">我方攻擊 +30%</div></div>
+          <div class="ev-dur">持續 1 回</div>
+        </div>
+        <div class="ev-item ev-good">
+          <div class="ev-icon">🏯</div>
+          <div style="flex:1"><div class="ev-name">城牆掩護</div><div class="ev-desc">我方受傷 -30%</div></div>
+          <div class="ev-dur">持續 2 回</div>
+        </div>
+        <div class="ev-item ev-good">
+          <div class="ev-icon">💀</div>
+          <div style="flex:1"><div class="ev-name">敵方士氣低</div><div class="ev-desc">敵方攻擊 -25%</div></div>
+          <div class="ev-dur">持續 2 回</div>
+        </div>
+        <div class="ev-item ev-good">
+          <div class="ev-icon">🗡️</div>
+          <div style="flex:1"><div class="ev-name">細作內應</div><div class="ev-desc">我方攻擊 +20%，敵受傷 +15%</div></div>
+          <div class="ev-dur">持續 1 回</div>
+        </div>
+
+        <div class="ev-item ev-bad">
+          <div class="ev-icon">🏹</div>
+          <div style="flex:1"><div class="ev-name">暗箭難防</div><div class="ev-desc">我方受傷 +25%</div></div>
+          <div class="ev-dur">持續 1 回</div>
+        </div>
+        <div class="ev-item ev-bad">
+          <div class="ev-icon">⚔️</div>
+          <div style="flex:1"><div class="ev-name">魏軍氣盛</div><div class="ev-desc">敵方攻擊 +25%</div></div>
+          <div class="ev-dur">持續 1 回</div>
+        </div>
+        <div class="ev-item ev-bad">
+          <div class="ev-icon">🔰</div>
+          <div style="flex:1"><div class="ev-name">魏軍堅盾</div><div class="ev-desc">敵方受傷 -25%（我方傷害降低）</div></div>
+          <div class="ev-dur">持續 2 回</div>
+        </div>
+
+        <div class="ev-item ev-neutral">
+          <div class="ev-icon">🌪️</div>
+          <div style="flex:1"><div class="ev-name">風沙大起</div><div class="ev-desc">雙方攻擊 -20%</div></div>
+          <div class="ev-dur">持續 2 回</div>
+        </div>
+        <div class="ev-item ev-neutral">
+          <div class="ev-icon">🌧️</div>
+          <div style="flex:1"><div class="ev-name">驟雨傾盆</div><div class="ev-desc">雙方攻擊 -15%</div></div>
+          <div class="ev-dur">持續 2 回</div>
+        </div>
+        <div class="ev-item ev-neutral">
+          <div class="ev-icon">🌫️</div>
+          <div style="flex:1"><div class="ev-name">濃霧瀰漫</div><div class="ev-desc">雙方攻擊大幅 -30%</div></div>
+          <div class="ev-dur">持續 1 回</div>
+        </div>
+        <div class="ev-item ev-neutral">
+          <div class="ev-icon">☀️</div>
+          <div style="flex:1"><div class="ev-name">旭日東升</div><div class="ev-desc">雙方攻擊 +15%</div></div>
+          <div class="ev-dur">持續 1 回</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
   <!-- 血量顏色 -->
   <div class="section">
     <div class="section-head">📊 血量條說明</div>
@@ -430,6 +519,14 @@
         <div class="tip">
           <div class="tip-num">6</div>
           <div>MP 快滿的角色不需要防守，留給真正缺 MP 的角色使用</div>
+        </div>
+        <div class="tip">
+          <div class="tip-num">7</div>
+          <div>看到 <span style="color:#66ee77">綠色</span>事件橫幅（地利、士氣大振）趁機猛攻！<span style="color:#ff6655">紅色</span>事件（暗箭、魏軍氣盛）出現時優先用防守或空城計撐過去</div>
+        </div>
+        <div class="tip">
+          <div class="tip-num">8</div>
+          <div>「魏軍堅盾」出現時敵方防禦大幅提升，姜維的火攻效果也會大打折扣，可等事件結束再出手</div>
         </div>
       </div>
     </div>
