@@ -60,16 +60,16 @@ body { font-family: 'Noto Serif TC', serif; color: #f0e6d3; user-select: none; }
 /* 外側人物大圖欄 */
 .fc-portrait-col   { display:flex; align-items:center; justify-content:center; padding:2px; border-right:1px solid #1a1a1a; }
 .fc-portrait-col-r { display:flex; align-items:center; justify-content:center; padding:2px; border-left:1px solid #1a1a1a; }
-.fc-sprite    { width:clamp(40px,9vw,68px); height:clamp(46px,11vw,80px); object-fit:contain; object-position:center bottom; image-rendering:pixelated; image-rendering:crisp-edges; display:block; background:transparent; }
+.fc-sprite    { width:clamp(44px,10vw,72px); height:clamp(55px,13vw,90px); object-fit:contain; object-position:center bottom; display:block; background:transparent; }
 .fc-sprite.flip { transform:scaleX(-1); }
-.fc-sprite-ph { width:clamp(40px,9vw,68px); height:clamp(46px,11vw,80px); background:#111; display:flex; align-items:center; justify-content:center; font-size:clamp(16px,4vw,24px); }
+.fc-sprite-ph { width:clamp(44px,10vw,72px); height:clamp(55px,13vw,90px); background:#111; display:flex; align-items:center; justify-content:center; font-size:clamp(16px,4vw,24px); }
 
 /* 玩家側（左中）/ 敵方側（右中）資訊欄 */
 .fc-pinfo { display:flex; flex-direction:column; gap:2px; align-items:flex-start; padding:clamp(3px,1vw,6px) clamp(4px,1.2vw,8px); justify-content:center; }
 .fc-einfo { display:flex; flex-direction:column; gap:2px; align-items:flex-end;   padding:clamp(3px,1vw,6px) clamp(4px,1.2vw,8px); justify-content:center; }
 
 /* 資訊欄內的小頭像（血條上方）*/
-.fc-face    { width:clamp(22px,6vw,36px); height:clamp(22px,6vw,36px); object-fit:contain; object-position:center; border:1px solid #555; display:block; image-rendering:pixelated; image-rendering:crisp-edges; margin-bottom:2px; background:transparent; }
+.fc-face    { width:clamp(26px,7vw,40px); height:clamp(32px,9vw,50px); object-fit:contain; object-position:center top; border:1px solid #555; display:block; margin-bottom:2px; background:transparent; }
 .fc-face-ph { width:clamp(22px,6vw,36px); height:clamp(22px,6vw,36px); background:#1a1a1a; border:1px solid #333; display:flex; align-items:center; justify-content:center; font-size:clamp(11px,3vw,16px); margin-bottom:2px; }
 .fc-einfo .fc-face, .fc-einfo .fc-face-ph { margin-left:auto; }
 
@@ -127,7 +127,7 @@ body { font-family: 'Noto Serif TC', serif; color: #f0e6d3; user-select: none; }
 
 /* 亂入覆蓋 */
 .intrude-overlay { position:absolute; inset:0; background:rgba(0,0,0,.92); z-index:200; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; }
-.intrude-portrait { width:130px; height:162px; object-fit:cover; object-position:top; border:3px solid #e8a020; }
+.intrude-portrait { width:clamp(140px,35vw,220px); height:clamp(175px,44vw,275px); object-fit:cover; object-position:top center; border:3px solid #e8a020; border-radius:2px; box-shadow:0 0 24px rgba(232,160,32,.5); }
 .intrude-title { font-size:26px; font-weight:900; letter-spacing:6px; }
 .intrude-ally { color:#44ff88; text-shadow:0 0 20px #44ff88; }
 .intrude-foe  { color:#ff4444; text-shadow:0 0 20px #ff4444; }
@@ -179,18 +179,24 @@ const IMG = {
   // 故事插圖（高解析度）
   zhuge_story:  'kongchengji_zhugeliang_20260429_093800.png',
   simayi_story: 'kongchengji_simayi_20260429_093745.png',
-  // 角色精靈（去背 + 點陣圖，用於戰鬥）
-  zhuge:    'px_zhuge.png',
-  simayi:   'px_simayi.png',
-  zhaoYun:  'px_zhaoYun.png',
-  jiangWei: 'px_jiangWei.png',
-  maDai:    'px_maDai.png',
-  zhangHe:  'px_zhangHe.png',
-  dengAi:   'px_dengAi.png',
-  tongziA:  'px_tongziA.png',
-  tongziB:  'px_tongziB.png',
-  simashi:  'px_simashi.png',
-  simazhao: 'px_simazhao.png',
+  // 武將亂入大圖（400x600，去背）
+  intrude_zhaoYun:  'intrude_zhaoYun.png',
+  intrude_jiangWei: 'intrude_jiangWei.png',
+  intrude_maDai:    'intrude_maDai.png',
+  intrude_zhangHe:  'intrude_zhangHe.png',
+  intrude_dengAi:   'intrude_dengAi.png',
+  // 角色精靈（去背高清，200x250，用於戰鬥面板）
+  zhuge:    'spr_zhuge.png',
+  simayi:   'spr_simayi.png',
+  zhaoYun:  'spr_zhaoYun.png',
+  jiangWei: 'spr_jiangWei.png',
+  maDai:    'spr_maDai.png',
+  zhangHe:  'spr_zhangHe.png',
+  dengAi:   'spr_dengAi.png',
+  tongziA:  'spr_tongziA.png',
+  tongziB:  'spr_tongziB.png',
+  simashi:  'spr_simashi.png',
+  simazhao: 'spr_simazhao.png',
 };
 
 // ════════════════════════
@@ -200,14 +206,14 @@ const CHAR_BASE = {
   zhuge:    { name:'諸葛亮', maxHp:270, atk:42, def:28, maxMp:60, img:IMG.zhuge,    tactics:['kongchengji','yibing','bagua'] },
   tongziA:  { name:'書童甲', maxHp:170, atk:55, def:20, maxMp:0,  img:IMG.tongziA,  tactics:[] },
   tongziB:  { name:'書童乙', maxHp:150, atk:50, def:18, maxMp:0,  img:IMG.tongziB,  tactics:[] },
-  zhaoYun:  { name:'趙雲',   maxHp:350, atk:88, def:50, maxMp:0,  img:IMG.zhaoYun,  tactics:[] },
-  jiangWei: { name:'姜維',   maxHp:290, atk:72, def:38, maxMp:30, img:IMG.jiangWei, tactics:['huogong'] },
-  maDai:    { name:'馬岱',   maxHp:240, atk:68, def:33, maxMp:0,  img:IMG.maDai,    tactics:[] },
-  simayi:   { name:'司馬懿', maxHp:380, atk:60, def:35, maxMp:30, img:IMG.simayi,   tactics:['qiangong'] },
+  zhaoYun:  { name:'趙雲',   maxHp:350, atk:88, def:50, maxMp:0,  img:IMG.zhaoYun,  charImg:IMG.intrude_zhaoYun,  tactics:[] },
+  jiangWei: { name:'姜維',   maxHp:290, atk:72, def:38, maxMp:30, img:IMG.jiangWei, charImg:IMG.intrude_jiangWei, tactics:['huogong'] },
+  maDai:    { name:'馬岱',   maxHp:240, atk:68, def:33, maxMp:0,  img:IMG.maDai,    charImg:IMG.intrude_maDai,    tactics:[] },
+  simayi:   { name:'司馬懿', maxHp:380, atk:60, def:35, maxMp:30, img:IMG.simayi,   charImg:IMG.simayi_story,     tactics:['qiangong'] },
   simashi:  { name:'司馬師', maxHp:280, atk:58, def:36, maxMp:0,  img:IMG.simashi,  tactics:[] },
   simazhao: { name:'司馬昭', maxHp:260, atk:62, def:32, maxMp:0,  img:IMG.simazhao, tactics:[] },
-  zhangHe:  { name:'張郃',   maxHp:310, atk:82, def:42, maxMp:0,  img:IMG.zhangHe,  tactics:[] },
-  dengAi:   { name:'鄧艾',   maxHp:270, atk:62, def:38, maxMp:0,  img:IMG.dengAi,   tactics:['yuancheng'] },
+  zhangHe:  { name:'張郃',   maxHp:310, atk:82, def:42, maxMp:0,  img:IMG.zhangHe,  charImg:IMG.intrude_zhangHe,  tactics:[] },
+  dengAi:   { name:'鄧艾',   maxHp:270, atk:62, def:38, maxMp:0,  img:IMG.dengAi,   charImg:IMG.intrude_dengAi,   tactics:['yuancheng'] },
 };
 
 const TACTICS_DEF = {
@@ -531,8 +537,9 @@ function renderIntrude(app) {
   const isAlly = side==='player';
   const cls = isAlly ? 'intrude-ally' : 'intrude-foe';
   const sub = isAlly ? '── 援軍到達！──' : '── 敵方增援！──';
-  const portraitHtml = charObj.img
-    ? `<img src="${charObj.img}" class="intrude-portrait intrude-anim">`
+  const portraitSrc = charObj.charImg || charObj.img;
+  const portraitHtml = portraitSrc
+    ? `<img src="${portraitSrc}" class="intrude-portrait intrude-anim">`
     : `<div style="font-size:60px" class="intrude-anim">⚔</div>`;
   app.innerHTML = `
     <div class="battle-wrap">
