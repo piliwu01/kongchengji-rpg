@@ -35,12 +35,14 @@ body { font-family: 'Noto Serif TC', serif; color: #f0e6d3; user-select: none; }
 .btn-start:hover { background: #a52020; box-shadow: 0 0 20px rgba(200,150,62,.5); transform: scale(1.04); }
 
 /* ─── STORY ─── */
-.story-wrap { flex: 1; display: flex; flex-direction: column; }
-.story-img { width: 100%; height: 230px; object-fit: cover; object-position: top; }
-.story-box { flex: 1; background: rgba(8,4,0,.96); border-top: 2px solid #8b1a1a; padding: 18px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
+.story-wrap { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.story-img-wrap { position: relative; width: 100%; background: #000; flex-shrink: 0; }
+.story-img { width: 100%; max-height: clamp(170px, 40vh, 300px); object-fit: contain; display: block; }
+.story-img-fade { position: absolute; bottom: 0; left: 0; right: 0; height: 48px; background: linear-gradient(transparent, rgba(4,2,0,1)); pointer-events: none; }
+.story-box { flex: 1; background: rgba(4,2,0,1); border-top: 2px solid #8b1a1a; padding: 16px 18px 14px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
 .story-speaker { font-size: 12px; color: #c8963e; letter-spacing: 3px; font-weight: 700; font-family: 'Noto Sans TC', sans-serif; }
-.story-text { font-size: 16px; line-height: 1.9; }
-.story-narr { font-size: 14px; line-height: 1.9; color: #b8a898; font-style: italic; }
+.story-text { font-size: clamp(14px, 4vw, 16px); line-height: 1.9; }
+.story-narr { font-size: clamp(13px, 3.5vw, 15px); line-height: 1.9; color: #b8a898; font-style: italic; }
 .story-next { margin-top: auto; padding-top: 10px; text-align: right; }
 .btn-next { background: transparent; border: 1px solid #5c3a1e; color: #c8963e; padding: 8px 20px; font-family: inherit; font-size: 13px; cursor: pointer; letter-spacing: 2px; transition: all .15s; }
 .btn-next:hover { border-color: #c8963e; background: rgba(200,150,62,.1); }
@@ -176,7 +178,13 @@ const IMG = {
   victory:  'kongchengji_victory_20260429_093840.png',
   defeat:   'kongchengji_defeat_20260429_093837.png',
   jieting:  'bg_jieting_20260429_095427.png',
-  // 故事插圖（高解析度）
+  // 故事插圖（場景專屬）
+  story_beifa:      'story_beifa.png',       // 北伐大軍行軍
+  story_jieting:    'story_jieting.png',     // 街亭失守
+  story_spy:        'story_spy.png',         // 探子急報
+  story_zhuge_calm: 'story_zhuge_calm.png',  // 諸葛亮備香備琴
+  story_kongcheng:  'story_kongcheng.png',   // 空城計撫琴
+  // 高解析度角色圖（備用）
   zhuge_story:  'kongchengji_zhugeliang_20260429_093800.png',
   simayi_story: 'kongchengji_simayi_20260429_093745.png',
   // 武將亂入大圖（400x600，去背）
@@ -230,15 +238,15 @@ const TACTICS_DEF = {
 // ════════════════════════
 const STORIES = {
   intro: [
-    { img:IMG.defeat,       spk:'旁白',   txt:'建興六年。蜀漢丞相諸葛亮揮師北伐，志在恢復中原。然而，一場失誤改變了一切——' },
-    { img:IMG.jieting,      spk:'旁白',   txt:'馬謖失守街亭。司馬懿率十五萬大軍，如潮水般直逼西城。' },
-    { img:IMG.zhuge_story,  spk:'探子',   txt:'丞相！城內只剩兩千五百老弱！大將皆不在側，撤退已來不及！' },
-    { img:IMG.zhuge_story,  spk:'諸葛亮', txt:'……（輕搖羽扇，嘴角微揚）不必慌張。備香、備琴。我自有辦法。' },
-    { img:IMG.zhuge_story,  spk:'旁白',   txt:'這一戰，不是靠兵力——而是靠膽識。', next:'jieting' },
+    { img:IMG.story_beifa,      spk:'旁白',   txt:'建興六年。蜀漢丞相諸葛亮揮師北伐，志在恢復中原。然而，一場失誤改變了一切——' },
+    { img:IMG.story_jieting,    spk:'旁白',   txt:'馬謖失守街亭。司馬懿率十五萬大軍，如潮水般直逼西城。' },
+    { img:IMG.story_spy,        spk:'探子',   txt:'丞相！城內只剩兩千五百老弱！大將皆不在側，撤退已來不及！' },
+    { img:IMG.story_zhuge_calm, spk:'諸葛亮', txt:'……（輕搖羽扇，嘴角微揚）不必慌張。備香、備琴。我自有辦法。' },
+    { img:IMG.story_zhuge_calm, spk:'旁白',   txt:'這一戰，不是靠兵力——而是靠膽識。', next:'jieting' },
   ],
   after_jieting: [
-    { img:IMG.jieting, spk:'旁白',   txt:'街亭一役，蜀軍難以抵擋魏軍主力。但諸葛亮已撤回西城，準備下一步棋。' },
-    { img:IMG.zhuge_story,  spk:'諸葛亮', txt:'司馬懿，你終究還是來了。那就讓你見識見識——空城計。', next:'xicheng' },
+    { img:IMG.story_jieting,    spk:'旁白',   txt:'街亭一役，蜀軍難以抵擋魏軍主力。但諸葛亮已撤回西城，準備下一步棋。' },
+    { img:IMG.story_kongcheng,  spk:'諸葛亮', txt:'司馬懿，你終究還是來了。那就讓你見識見識——空城計。', next:'xicheng' },
   ],
 };
 
@@ -345,7 +353,10 @@ function renderStory(app) {
   const btnTxt = isLast ? (s.next ? '出戰 ⚔' : '確認 ▶') : '繼續 ▶';
   app.innerHTML = `
     <div class="story-wrap fade-in">
-      <img src="${s.img}" class="story-img">
+      <div class="story-img-wrap">
+        <img src="${s.img}" class="story-img">
+        <div class="story-img-fade"></div>
+      </div>
       <div class="story-box">
         ${s.spk==='旁白'
           ? `<div class="story-narr">── ${s.txt} ──</div>`
