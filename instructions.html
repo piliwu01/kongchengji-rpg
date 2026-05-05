@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>空城計 RPG — 遊戲說明</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+    background: #0a0a0f;
+    color: #c8bfa8;
+    min-height: 100vh;
+    padding: 20px 16px 40px;
+  }
+
+  .container { max-width: 640px; margin: 0 auto; }
+
+  /* ── Header ── */
+  .page-header {
+    text-align: center;
+    padding: 28px 0 20px;
+    border-bottom: 1px solid #2a1e0e;
+    margin-bottom: 24px;
+  }
+  .page-title {
+    font-size: clamp(22px, 6vw, 32px);
+    font-weight: 900;
+    color: #c8963e;
+    letter-spacing: 6px;
+    text-shadow: 0 0 20px rgba(200,150,62,.5);
+  }
+  .page-sub {
+    font-size: 13px;
+    color: #665544;
+    margin-top: 6px;
+    letter-spacing: 2px;
+  }
+  .back-link {
+    display: inline-block;
+    margin-top: 12px;
+    color: #7a6040;
+    font-size: 12px;
+    text-decoration: none;
+    border: 1px solid #3a2a10;
+    padding: 4px 14px;
+    border-radius: 2px;
+    letter-spacing: 1px;
+    transition: color .2s, border-color .2s;
+  }
+  .back-link:hover { color: #c8963e; border-color: #c8963e; }
+
+  /* ── Section ── */
+  .section {
+    background: #0f0f18;
+    border: 1px solid #2a1e0e;
+    border-radius: 3px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .section-head {
+    background: #1a1208;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #c8963e;
+    letter-spacing: 3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-body { padding: 14px 16px; }
+
+  /* ── Flow ── */
+  .flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    font-size: clamp(11px, 3vw, 13px);
+    color: #a89070;
+    text-align: center;
+  }
+  .flow-step {
+    background: #1a1208;
+    border: 1px solid #3a2a10;
+    padding: 6px 10px;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+  .flow-arrow { color: #4a3a20; font-size: 14px; }
+
+  /* ── Table ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: clamp(12px, 3.2vw, 13px);
+  }
+  th {
+    background: #161016;
+    color: #665544;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 1px;
+    padding: 7px 10px;
+    text-align: left;
+    border-bottom: 1px solid #2a1e0e;
+  }
+  td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #1a1208;
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(200,150,62,.04); }
+  .td-key {
+    color: #e8b050;
+    font-weight: 700;
+    white-space: nowrap;
+    width: 30%;
+  }
+  .td-cost {
+    color: #8888cc;
+    white-space: nowrap;
+    width: 15%;
+    text-align: center;
+  }
+
+  /* ── HP bar demo ── */
+  .hp-demo { display: flex; flex-direction: column; gap: 8px; }
+  .hp-row { display: flex; align-items: center; gap: 10px; }
+  .hp-bar-wrap { flex: 1; height: 10px; background: #1a1208; border-radius: 1px; overflow: hidden; }
+  .hp-bar { height: 100%; border-radius: 1px; }
+  .hp-green  { background: linear-gradient(90deg,#22aa44,#44cc66); width: 80%; }
+  .hp-orange { background: linear-gradient(90deg,#cc8822,#ffaa33); width: 38%; }
+  .hp-red    { background: linear-gradient(90deg,#cc2222,#ff4444); width: 18%; }
+  .hp-label { font-size: 12px; width: 110px; color: #a89070; }
+
+  /* ── Tips ── */
+  .tip-list { display: flex; flex-direction: column; gap: 10px; }
+  .tip {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: clamp(12px, 3.2vw, 13px);
+    line-height: 1.6;
+  }
+  .tip-num {
+    background: #c8963e;
+    color: #0a0a0f;
+    font-weight: 900;
+    font-size: 11px;
+    min-width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ── Ending ── */
+  .ending-list { display: flex; flex-direction: column; gap: 8px; }
+  .ending-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 2px;
+    font-size: clamp(12px, 3.2vw, 13px);
+    line-height: 1.5;
+  }
+  .ending-win     { background: rgba(200,150,62,.08); border-left: 3px solid #c8963e; }
+  .ending-lose    { background: rgba(200,60,60,.08);  border-left: 3px solid #cc4444; }
+  .ending-special { background: rgba(80,120,200,.08); border-left: 3px solid #5588cc; }
+  .ending-icon { font-size: 18px; flex-shrink: 0; }
+  .ending-name { font-weight: 700; margin-bottom: 2px; }
+  .ending-cond { color: #665544; font-size: 12px; }
+
+  /* ── Intrude badge ── */
+  .badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 2px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .badge-ally { background: rgba(68,255,136,.15); color: #44ff88; border: 1px solid #44ff88; }
+  .badge-foe  { background: rgba(255,68,68,.15);  color: #ff5555; border: 1px solid #ff5555; }
+
+  /* ── Footer ── */
+  .page-footer {
+    text-align: center;
+    margin-top: 28px;
+    padding-top: 16px;
+    border-top: 1px solid #1a1208;
+    font-size: 11px;
+    color: #3a2a10;
+    letter-spacing: 2px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="page-title">空 城 計</div>
+    <div class="page-sub">三國 策略 戰鬥 RPG ─ 遊戲說明</div>
+    <a href="kongchengji2.html" class="back-link">← 回遊戲</a>
+  </div>
+
+  <!-- 遊戲流程 -->
+  <div class="section">
+    <div class="section-head">🗺 遊戲流程</div>
+    <div class="section-body">
+      <div class="flow">
+        <div class="flow-step">標題畫面</div>
+        <span class="flow-arrow">▶</span>
+        <div class="flow-step">劇情故事</div>
+        <span class="flow-arrow">▶</span>
+        <div class="flow-step">街亭之戰</div>
+        <span class="flow-arrow">▶</span>
+        <div class="flow-step">劇情過場</div>
+        <span class="flow-arrow">▶</span>
+        <div class="flow-step">西城保衛戰</div>
+        <span class="flow-arrow">▶</span>
+        <div class="flow-step">結局</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 戰鬥基本規則 -->
+  <div class="section">
+    <div class="section-head">⚔ 戰鬥基本規則</div>
+    <div class="section-body">
+      <table>
+        <tr><td class="td-key">行動順序</td><td>玩家方先手，輪流操控每名角色後換敵方自動行動</td></tr>
+        <tr><td class="td-key">勝利條件</td><td>敵方角色全部落敗</td></tr>
+        <tr><td class="td-key">失敗條件</td><td>玩家方角色全部落敗</td></tr>
+        <tr><td class="td-key">策略值 MP</td><td>用來施展計略，部分角色沒有 MP（只能攻擊或防守）</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 指令說明 -->
+  <div class="section">
+    <div class="section-head">🕹 每回合指令</div>
+    <div class="section-body">
+      <table>
+        <thead><tr><th>指令</th><th>說明</th></tr></thead>
+        <tbody>
+          <tr><td class="td-key">攻 擊</td><td>選擇一名敵人進行普通攻擊</td></tr>
+          <tr><td class="td-key">計 略</td><td>消耗策略值（MP）使用特殊技；MP 不足則無法使用</td></tr>
+          <tr><td class="td-key">防 守</td><td>本回不攻擊，回復 10 點策略值（MP 已滿則無效）</td></tr>
+          <tr><td class="td-key">撤 退</td><td>讓這名角色暫時退出戰場，犧牲攻擊換取保命</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 策略技能 -->
+  <div class="section">
+    <div class="section-head">🔮 策略技能一覽</div>
+    <div class="section-body">
+      <table>
+        <thead><tr><th>角色</th><th>技能</th><th style="text-align:center">消耗</th><th>效果</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="td-key">諸葛亮</td>
+            <td>空城計</td>
+            <td class="td-cost">20</td>
+            <td>50% 機率敵方本回全體不攻擊</td>
+          </tr>
+          <tr>
+            <td class="td-key">諸葛亮</td>
+            <td>疑兵之計</td>
+            <td class="td-cost">15</td>
+            <td>敵方攻擊力 -40%，持續 2 回合</td>
+          </tr>
+          <tr>
+            <td class="td-key">諸葛亮</td>
+            <td>八卦陣</td>
+            <td class="td-cost">10</td>
+            <td>我方防禦力 +60%，持續 1 回合</td>
+          </tr>
+          <tr>
+            <td class="td-key">姜 維</td>
+            <td>火攻</td>
+            <td class="td-cost">25</td>
+            <td>對<strong style="color:#ffaa44">全體敵人</strong>造成大量傷害</td>
+          </tr>
+          <tr>
+            <td class="td-key">司馬懿</td>
+            <td>強攻</td>
+            <td class="td-cost">20</td>
+            <td>1.5 倍傷害攻擊一名目標</td>
+          </tr>
+          <tr>
+            <td class="td-key">鄧 艾</td>
+            <td>遠程射擊</td>
+            <td class="td-cost" style="color:#44cc88">0</td>
+            <td>無視防禦攻擊一名目標（<strong style="color:#44cc88">免費</strong>）</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 武將亂入 -->
+  <div class="section">
+    <div class="section-head">🦅 武將亂入系統</div>
+    <div class="section-body">
+      <table>
+        <thead><tr><th>觸發條件</th><th>登場武將</th><th>陣營</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>玩家方總血量剩 30% 以下</td>
+            <td class="td-key">趙 雲</td>
+            <td><span class="badge badge-ally">我方援軍</span></td>
+          </tr>
+          <tr>
+            <td>累計使用計略 3 次以上</td>
+            <td class="td-key">姜 維</td>
+            <td><span class="badge badge-ally">我方援軍</span></td>
+          </tr>
+          <tr>
+            <td>第 8 回合開始</td>
+            <td class="td-key">馬 岱</td>
+            <td><span class="badge badge-ally">我方援軍</span></td>
+          </tr>
+          <tr>
+            <td>敵方總血量剩 45% 以下</td>
+            <td class="td-key">張 郃</td>
+            <td><span class="badge badge-foe">敵方增援</span></td>
+          </tr>
+          <tr>
+            <td>第 10 回合開始</td>
+            <td class="td-key">鄧 艾</td>
+            <td><span class="badge badge-foe">敵方增援</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 血量顏色 -->
+  <div class="section">
+    <div class="section-head">📊 血量條說明</div>
+    <div class="section-body">
+      <div class="hp-demo">
+        <div class="hp-row">
+          <div class="hp-label">🟢 50% 以上 — 安全</div>
+          <div class="hp-bar-wrap"><div class="hp-bar hp-green"></div></div>
+        </div>
+        <div class="hp-row">
+          <div class="hp-label">🟠 25～50% — 注意</div>
+          <div class="hp-bar-wrap"><div class="hp-bar hp-orange"></div></div>
+        </div>
+        <div class="hp-row">
+          <div class="hp-label">🔴 25% 以下 — 瀕危</div>
+          <div class="hp-bar-wrap"><div class="hp-bar hp-red"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 結局 -->
+  <div class="section">
+    <div class="section-head">🏆 結局條件</div>
+    <div class="section-body">
+      <div class="ending-list">
+        <div class="ending-item ending-win">
+          <div class="ending-icon">★</div>
+          <div>
+            <div class="ending-name">空城計，大成功！</div>
+            <div class="ending-cond">敵方所有角色全部落敗</div>
+          </div>
+        </div>
+        <div class="ending-item ending-lose">
+          <div class="ending-icon">✕</div>
+          <div>
+            <div class="ending-name">西城陷落</div>
+            <div class="ending-cond">玩家方所有角色全部落敗</div>
+          </div>
+        </div>
+        <div class="ending-item ending-special">
+          <div class="ending-icon">◈</div>
+          <div>
+            <div class="ending-name">虎口脫險</div>
+            <div class="ending-cond">特定條件下成功撤退，保住有生力量</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 攻略提示 -->
+  <div class="section">
+    <div class="section-head">💡 攻略提示</div>
+    <div class="section-body">
+      <div class="tip-list">
+        <div class="tip">
+          <div class="tip-num">1</div>
+          <div>諸葛亮是核心，盡量讓他撐到最後，優先保護他的 HP</div>
+        </div>
+        <div class="tip">
+          <div class="tip-num">2</div>
+          <div>「空城計＋疑兵之計」連用，可大幅降低連續幾回合受到的傷害</div>
+        </div>
+        <div class="tip">
+          <div class="tip-num">3</div>
+          <div>書童沒有計略，但攻擊力不低，可兼顧肉盾與輸出</div>
+        </div>
+        <div class="tip">
+          <div class="tip-num">4</div>
+          <div>援軍加入會佔新的行動格，確保場上有位置才能觸發亂入</div>
+        </div>
+        <div class="tip">
+          <div class="tip-num">5</div>
+          <div>鄧艾「遠程射擊」不消耗 MP，對防禦高的目標特別有效</div>
+        </div>
+        <div class="tip">
+          <div class="tip-num">6</div>
+          <div>MP 快滿的角色不需要防守，留給真正缺 MP 的角色使用</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Back button -->
+  <div style="text-align:center;margin-top:8px">
+    <a href="kongchengji2.html" class="back-link" style="font-size:14px;padding:10px 32px">⚔ 開始遊戲</a>
+  </div>
+
+  <div class="page-footer">空城計 RPG &nbsp;·&nbsp; 建興六年，諸葛亮空城退十五萬大軍</div>
+
+</div>
+</body>
+</html>
