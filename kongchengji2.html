@@ -176,7 +176,10 @@ const IMG = {
   victory:  'kongchengji_victory_20260429_093840.png',
   defeat:   'kongchengji_defeat_20260429_093837.png',
   jieting:  'bg_jieting_20260429_095427.png',
-  // 角色圖：去背 + 點陣圖風格 (px_*.png)
+  // 故事插圖（高解析度）
+  zhuge_story:  'kongchengji_zhugeliang_20260429_093800.png',
+  simayi_story: 'kongchengji_simayi_20260429_093745.png',
+  // 角色精靈（去背 + 點陣圖，用於戰鬥）
   zhuge:    'px_zhuge.png',
   simayi:   'px_simayi.png',
   zhaoYun:  'px_zhaoYun.png',
@@ -221,15 +224,15 @@ const TACTICS_DEF = {
 // ════════════════════════
 const STORIES = {
   intro: [
-    { img:IMG.defeat,  spk:'旁白',   txt:'建興六年。蜀漢丞相諸葛亮揮師北伐，志在恢復中原。然而，一場失誤改變了一切——' },
-    { img:IMG.jieting, spk:'旁白',   txt:'馬謖失守街亭。司馬懿率十五萬大軍，如潮水般直逼西城。' },
-    { img:IMG.zhuge,   spk:'探子',   txt:'丞相！城內只剩兩千五百老弱！大將皆不在側，撤退已來不及！' },
-    { img:IMG.zhuge,   spk:'諸葛亮', txt:'……（輕搖羽扇，嘴角微揚）不必慌張。備香、備琴。我自有辦法。' },
-    { img:IMG.zhuge,   spk:'旁白',   txt:'這一戰，不是靠兵力——而是靠膽識。', next:'jieting' },
+    { img:IMG.defeat,       spk:'旁白',   txt:'建興六年。蜀漢丞相諸葛亮揮師北伐，志在恢復中原。然而，一場失誤改變了一切——' },
+    { img:IMG.jieting,      spk:'旁白',   txt:'馬謖失守街亭。司馬懿率十五萬大軍，如潮水般直逼西城。' },
+    { img:IMG.zhuge_story,  spk:'探子',   txt:'丞相！城內只剩兩千五百老弱！大將皆不在側，撤退已來不及！' },
+    { img:IMG.zhuge_story,  spk:'諸葛亮', txt:'……（輕搖羽扇，嘴角微揚）不必慌張。備香、備琴。我自有辦法。' },
+    { img:IMG.zhuge_story,  spk:'旁白',   txt:'這一戰，不是靠兵力——而是靠膽識。', next:'jieting' },
   ],
   after_jieting: [
     { img:IMG.jieting, spk:'旁白',   txt:'街亭一役，蜀軍難以抵擋魏軍主力。但諸葛亮已撤回西城，準備下一步棋。' },
-    { img:IMG.zhuge,   spk:'諸葛亮', txt:'司馬懿，你終究還是來了。那就讓你見識見識——空城計。', next:'xicheng' },
+    { img:IMG.zhuge_story,  spk:'諸葛亮', txt:'司馬懿，你終究還是來了。那就讓你見識見識——空城計。', next:'xicheng' },
   ],
 };
 
