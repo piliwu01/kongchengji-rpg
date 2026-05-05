@@ -92,6 +92,7 @@ body { font-family: 'Noto Serif TC', serif; color: #f0e6d3; user-select: none; }
 .fc-textbox-line.log-tactic { color:#88aaff; }
 .fc-textbox-line.log-intrude{ color:#44ff88; font-weight:700; }
 .fc-textbox-line.log-system { color:#666; }
+.fc-textbox-line.log-event  { color:#ffdd77; font-style:italic; }
 .fc-portrait { width:70px; flex-shrink:0; border:2px solid #fff; background:#0a0a0a; display:flex; align-items:center; justify-content:center; }
 .fc-portrait img { width:100%; height:100%; object-fit:contain; object-position:center; image-rendering:pixelated; image-rendering:crisp-edges; }
 
@@ -108,6 +109,12 @@ body { font-family: 'Noto Serif TC', serif; color: #f0e6d3; user-select: none; }
 .fc-btn.defend-btn { border-color:#22aabb; color:#44ccdd; }
 .fc-btn.defend-btn:hover:not(:disabled) { background:#22aabb; color:#000; }
 /* 計略列表 */
+/* 隨機事件橫幅 */
+.fc-event-bar { padding:4px 10px; font-size:clamp(10px,2.8vw,12px); text-align:center; letter-spacing:1px; border-bottom:1px solid #1a1a1a; transition:background .3s; }
+.ev-good    { background:rgba(20,100,40,.45);  color:#66ee88; }
+.ev-bad     { background:rgba(120,20,20,.45);  color:#ff7777; }
+.ev-neutral { background:rgba(80,70,20,.45);   color:#ffcc55; }
+
 .fc-tactic-list { display:flex; flex-direction:column; gap:4px; }
 .fc-tactic-btn { background:#000; border:2px solid #6644cc; color:#aabbff; padding:6px 10px; font-family:'Noto Sans TC',sans-serif; font-size:clamp(11px,2.8vw,13px); cursor:pointer; display:flex; flex-direction:column; gap:2px; transition:all .1s; }
 .fc-tactic-btn:hover:not(:disabled) { background:#6644cc; color:#fff; }
@@ -234,6 +241,38 @@ const TACTICS_DEF = {
 };
 
 // ════════════════════════
+//  RANDOM EVENTS
+// ════════════════════════
+// pAtk: 我方攻擊倍率  pDmg: 我方受傷倍率  eAtk: 敵方攻擊倍率  eDmg: 敵方受傷倍率
+// type: good(利我) / bad(不利) / neutral(雙向)
+const EVENT_DEFS = [
+  { id:'wind',  name:'風沙大起',   icon:'🌪', desc:'雙方攻擊 -20%',            type:'neutral', dur:2, pAtk:0.80, pDmg:1.00, eAtk:0.80, eDmg:1.00 },
+  { id:'rain',  name:'驟雨傾盆',   icon:'🌧', desc:'雙方攻擊 -15%',            type:'neutral', dur:2, pAtk:0.85, pDmg:1.00, eAtk:0.85, eDmg:1.00 },
+  { id:'fog',   name:'濃霧瀰漫',   icon:'🌫', desc:'雙方攻擊大幅 -30%',        type:'neutral', dur:1, pAtk:0.70, pDmg:1.00, eAtk:0.70, eDmg:1.00 },
+  { id:'dawn',  name:'旭日東升',   icon:'☀️', desc:'雙方攻擊 +15%',           type:'neutral', dur:1, pAtk:1.15, pDmg:1.00, eAtk:1.15, eDmg:1.00 },
+  { id:'terr',  name:'地利我方',   icon:'⛰️', desc:'我方攻擊 +25%',           type:'good',    dur:2, pAtk:1.25, pDmg:1.00, eAtk:1.00, eDmg:1.00 },
+  { id:'moral', name:'士氣大振',   icon:'🔥', desc:'我方攻擊 +30%',            type:'good',    dur:1, pAtk:1.30, pDmg:1.00, eAtk:1.00, eDmg:1.00 },
+  { id:'wall',  name:'城牆掩護',   icon:'🏯', desc:'我方受傷 -30%',            type:'good',    dur:2, pAtk:1.00, pDmg:0.70, eAtk:1.00, eDmg:1.00 },
+  { id:'wlow',  name:'敵方士氣低', icon:'💀', desc:'敵方攻擊 -25%',            type:'good',    dur:2, pAtk:1.00, pDmg:1.00, eAtk:0.75, eDmg:1.00 },
+  { id:'spy',   name:'細作內應',   icon:'🗡️', desc:'我方攻擊 +20%，敵受傷 +15%', type:'good', dur:1, pAtk:1.20, pDmg:1.00, eAtk:1.00, eDmg:1.15 },
+  { id:'arrow', name:'暗箭難防',   icon:'🏹', desc:'我方受傷 +25%',            type:'bad',     dur:1, pAtk:1.00, pDmg:1.25, eAtk:1.00, eDmg:1.00 },
+  { id:'weim',  name:'魏軍氣盛',   icon:'⚔️', desc:'敵方攻擊 +25%',           type:'bad',     dur:1, pAtk:1.00, pDmg:1.00, eAtk:1.25, eDmg:1.00 },
+  { id:'weiw',  name:'魏軍堅盾',   icon:'🔰', desc:'敵方受傷 -25%',           type:'bad',     dur:2, pAtk:1.00, pDmg:1.00, eAtk:1.00, eDmg:0.75 },
+];
+
+function getEvMods() {
+  if (!G.activeEvent) return { pAtk:1, pDmg:1, eAtk:1, eDmg:1 };
+  return G.activeEvent.def;
+}
+
+function rollEvent() {
+  const ev = EVENT_DEFS[Math.floor(Math.random() * EVENT_DEFS.length)];
+  G.activeEvent = { def: ev, turns: ev.dur };
+  const typeLabel = ev.type==='good' ? '✦ 有利' : ev.type==='bad' ? '✦ 不利' : '✦ 天候';
+  log(`${typeLabel}｜${ev.icon} 【${ev.name}】${ev.desc}，持續 ${ev.dur} 回合`, 'log-event');
+}
+
+// ════════════════════════
 //  STORY SCRIPTS
 // ════════════════════════
 const STORIES = {
@@ -282,6 +321,7 @@ let G = {
   intrudeDone: new Set(),
   pendingIntrude: null,
   buffs: { playerDef:0, enemyAtk:0, kongEffect:false },
+  activeEvent: null,
   storyScript: null,
   storyIdx: 0,
   endingType: null,
@@ -395,6 +435,12 @@ function renderEnding(app) {
     </div>`;
 }
 
+function buildEvBar() {
+  if (!G.activeEvent) return '<div id="fc-event-bar" style="display:none"></div>';
+  const ev = G.activeEvent.def;
+  return `<div id="fc-event-bar" class="fc-event-bar ev-${ev.type}">${ev.icon} 【${ev.name}】${ev.desc}　剩 ${G.activeEvent.turns} 回</div>`;
+}
+
 // ════════════════════════
 //  BATTLE RENDER (FC 風格)
 // ════════════════════════
@@ -413,6 +459,7 @@ function renderBattle(app) {
         <span style="color:#666;font-size:10px">${buffStr}</span>
         <span>第${G.turn}回合</span>
       </div>
+      ${buildEvBar()}
       <div class="fc-rows" id="fc-rows">${buildFCRows()}</div>
       <div class="fc-bottom">${buildFCBottom()}</div>
       <div id="fc-cmd">${buildFCCmd()}</div>
@@ -594,6 +641,18 @@ function refreshPartial() {
     ].filter(Boolean).join(' ');
     hdr.textContent = s;
   }
+  // event bar
+  const evBar = document.getElementById('fc-event-bar');
+  if (evBar) {
+    if (G.activeEvent) {
+      const ev = G.activeEvent.def;
+      evBar.style.display = '';
+      evBar.className = `fc-event-bar ev-${ev.type}`;
+      evBar.innerHTML = `${ev.icon} 【${ev.name}】${ev.desc}　剩 ${G.activeEvent.turns} 回`;
+    } else {
+      evBar.style.display = 'none';
+    }
+  }
   // active row highlight
   document.querySelectorAll('.fc-row').forEach((row, i) => {
     const p = G.players[i];
@@ -637,6 +696,7 @@ function initBattle(stageKey) {
   G.intrudeDone = new Set();
   G.pendingIntrude = null;
   G.buffs = { playerDef:0, enemyAtk:0, kongEffect:false };
+  G.activeEvent = null;
   G.busy  = false;
   G.players = ['zhuge','tongziA','tongziB'].map(makeChar);
   G.enemies = ['simashi','simayi','simazhao'].map(makeChar);
@@ -663,7 +723,8 @@ function doAttack(enemyKey) {
   G.cmdMode = 'main';
   G.busy = true;
 
-  const dmg = calcDmg(actor.atk, target.def * (G.buffs.playerDef>0?0.4:1));
+  const ev = getEvMods();
+  const dmg = Math.round(calcDmg(actor.atk * ev.pAtk, target.def * (G.buffs.playerDef>0?0.4:1)) * ev.eDmg);
   applyDmg(target, dmg);
   log(`${actor.name} 攻擊 ${target.name}，造成 ${dmg} 傷害！`, 'log-atk');
 
@@ -701,9 +762,10 @@ function doTactic(tid) {
       log(`✦ ${actor.name} 使用【八卦陣】！我方防禦大幅提升！`, 'log-tactic');
       break;
     case 'huogong': {
+      const ev2 = getEvMods();
       const targets = alive(G.enemies);
       targets.forEach(e => {
-        const dmg = calcDmg(actor.atk * 1.5, e.def);
+        const dmg = Math.round(calcDmg(actor.atk * 1.5 * ev2.pAtk, e.def) * ev2.eDmg);
         applyDmg(e, dmg);
         log(`🔥 火攻！${e.name} 受到 ${dmg} 傷害！`, 'log-atk');
       });
@@ -805,7 +867,8 @@ function startEnemyTurn() {
     simayi.mp -= 20;
     const t = alive(G.players)[0];
     if (t) {
-      const dmg = calcDmg(simayi.atk * 1.5, t.def);
+      const evS = getEvMods();
+      const dmg = Math.round(calcDmg(simayi.atk * 1.5 * evS.eAtk, t.def) * evS.pDmg);
       applyDmg(t, dmg);
       log(`司馬懿 發動【強攻】！${t.name} 受到 ${dmg} 傷害！`, 'log-tactic');
       extraDelay = 400;
@@ -830,9 +893,10 @@ function startEnemyTurn() {
       }
 
       const ignDef = e.key==='dengAi';
-      const atkMult = G.buffs.enemyAtk>0 ? 0.6 : 1;
+      const evE = getEvMods();
+      const atkMult = (G.buffs.enemyAtk>0 ? 0.6 : 1) * evE.eAtk;
       const defMult = G.buffs.playerDef>0 ? 0.45 : 1;
-      const dmg = calcDmg(e.atk * atkMult, target.def * defMult, ignDef);
+      const dmg = Math.round(calcDmg(e.atk * atkMult, target.def * defMult, ignDef) * evE.pDmg);
       applyDmg(target, dmg);
 
       if (ignDef) log(`${e.name} 發動【遠程射擊】！無視防禦！${target.name} 受到 ${dmg} 傷害！`, 'log-tactic');
@@ -854,8 +918,21 @@ function startEnemyTurn() {
 function finishEnemyTurn() {
   if (G.buffs.playerDef>0) G.buffs.playerDef--;
   if (G.buffs.enemyAtk>0)  G.buffs.enemyAtk--;
+
+  // 隨機事件倒數
+  if (G.activeEvent) {
+    G.activeEvent.turns--;
+    if (G.activeEvent.turns <= 0) {
+      log(`　　【${G.activeEvent.def.name}】效果消退。`, 'log-system');
+      G.activeEvent = null;
+    }
+  }
+
   G.turn++;
   if (checkEnd()) return;
+
+  // 新回合 45% 機率觸發隨機事件（無事件時）
+  if (!G.activeEvent && Math.random() < 0.45) rollEvent();
 
   G.phase = 'player';
   G.playerIdx = 0;
