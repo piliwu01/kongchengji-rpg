@@ -1133,143 +1133,25 @@ function startStory(key) {
 }
 
 // ════════════════════════
-//  BGM  (Web Audio API 五聲音階古戰場主題)
+//  BGM  (HTML5 Audio)
 // ════════════════════════
-let _bgmCtx   = null;
-let _bgmOn    = false;
-let _bgmTimer = null;
-let _bgmMaster = null;
-
-// ── 音符頻率表（A 小調五聲音階）──
-const _N = {
-  A1:55.0,  D2:73.4,  E2:82.4,
-  A2:110.0, C3:130.8, D3:146.8, E3:164.8, G3:196.0, A3:220.0,
-  C4:261.6, D4:293.7, E4:329.6, G4:392.0, A4:440.0,
-  C5:523.3, D5:587.3, E5:659.3, G5:784.0,
-};
-
-// ── 16 拍主旋律（笛簫風）──
-const _MEL = [
-  [_N.E4,.5],[_N.D4,.5],[_N.A3,1],  [_N.C4,.5],[_N.D4,.5],[_N.E4,1],
-  [_N.G4,1], [_N.E4,.5],[_N.D4,.5], [_N.A3,2],
-  [_N.A4,1], [_N.G4,.5],[_N.E4,.5], [_N.D4,.5],[_N.E4,.5],[_N.G4,1],
-  [_N.A4,2], [_N.G4,.5],[_N.A4,.5], [_N.E4,2],
-];
-// ── 16 拍低音（琵琶撥弦風）──
-const _BASS = [
-  [_N.A2,1],[_N.A2,.5],[_N.A2,.5], [_N.E2,2],
-  [_N.A2,1],[_N.A2,.5],[_N.A2,.5], [_N.D2,2],
-  [_N.A2,1],[_N.C3,.5],[_N.A2,.5], [_N.E2,2],
-  [_N.A2,1],[_N.A2,.5],[_N.G3,.5], [_N.A2,2],
-];
-// ── 8 拍副旋律（每 8 拍換一輪）──
-const _HARM = [
-  [_N.C4,2],[_N.E4,2],[_N.D4,2],[_N.A3,2],
-  [_N.E4,2],[_N.G4,2],[_N.E4,2],[_N.D4,2],
-];
-
-function _note(ctx, dest, freq, t, dur, vol, type='triangle') {
-  const osc = ctx.createOscillator();
-  const g   = ctx.createGain();
-  osc.type = type;
-  osc.frequency.value = freq;
-  osc.connect(g);
-  g.connect(dest);
-  g.gain.setValueAtTime(0, t);
-  g.gain.linearRampToValueAtTime(vol, t + 0.02);
-  g.gain.setValueAtTime(vol * 0.75, t + dur * 0.6);
-  g.gain.linearRampToValueAtTime(0, t + dur);
-  osc.start(t);
-  osc.stop(t + dur + 0.05);
-}
-
-function _drum(ctx, dest, t, vol=0.4) {
-  // 鼓：低頻正弦快速滑落（嗵鼓）
-  const osc = ctx.createOscillator();
-  const g   = ctx.createGain();
-  osc.type = 'sine';
-  osc.frequency.setValueAtTime(140, t);
-  osc.frequency.exponentialRampToValueAtTime(28, t + 0.14);
-  osc.connect(g);
-  g.connect(dest);
-  g.gain.setValueAtTime(vol, t);
-  g.gain.linearRampToValueAtTime(0, t + 0.18);
-  osc.start(t);
-  osc.stop(t + 0.22);
-  // 木魚輔節（高頻短促，隔拍）
-  const osc2 = ctx.createOscillator();
-  const g2   = ctx.createGain();
-  osc2.type = 'sine';
-  osc2.frequency.value = 800;
-  osc2.connect(g2);
-  g2.connect(dest);
-  g2.gain.setValueAtTime(vol * 0.18, t);
-  g2.gain.linearRampToValueAtTime(0, t + 0.04);
-  osc2.start(t);
-  osc2.stop(t + 0.06);
-}
-
-function _scheduleLoop(ctx, dest, startT) {
-  const BPM  = 128;
-  const beat = 60 / BPM;          // ≈ 0.469 秒 / 拍
-  const loop = 16 * beat;         // ≈ 7.5 秒 / 圈
-
-  // 主旋律（三角波：笛簫）
-  let t = startT;
-  _MEL.forEach(([f, d]) => {
-    _note(ctx, dest, f, t, d * beat * 0.85, 0.18, 'triangle');
-    t += d * beat;
-  });
-
-  // 低音撥弦（正弦）
-  let tb = startT;
-  _BASS.forEach(([f, d]) => {
-    _note(ctx, dest, f, tb, d * beat * 0.7, 0.28, 'sine');
-    tb += d * beat;
-  });
-
-  // 副旋律（方波低音量，古箏撥感）
-  let th = startT;
-  _HARM.forEach(([f, d]) => {
-    _note(ctx, dest, f, th, d * beat * 0.55, 0.07, 'square');
-    th += d * beat;
-  });
-
-  // 嗵鼓 + 木魚（每 2 拍打一下）
-  for (let i = 0; i < 8; i++) {
-    _drum(ctx, dest, startT + i * 2 * beat, i % 4 === 0 ? 0.45 : 0.28);
-  }
-
-  return startT + loop;
-}
+const _bgmAudio = new Audio('battle_bgm.m4a');
+_bgmAudio.loop   = true;
+_bgmAudio.volume = 0.75;
+let _bgmOn = false;
 
 function startBGM() {
   if (_bgmOn) return;
   _bgmOn = true;
+  _bgmAudio.currentTime = 0;
+  _bgmAudio.play().catch(() => {});
   updateMuteBtn();
-  try {
-    if (!_bgmCtx) _bgmCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (_bgmCtx.state === 'suspended') _bgmCtx.resume();
-    _bgmMaster = _bgmCtx.createGain();
-    _bgmMaster.gain.value = 0.52;
-    _bgmMaster.connect(_bgmCtx.destination);
-    let nextStart = _bgmCtx.currentTime + 0.06;
-    function tick() {
-      if (!_bgmOn) return;
-      const now = _bgmCtx.currentTime;
-      while (nextStart - now < 2.0) {
-        nextStart = _scheduleLoop(_bgmCtx, _bgmMaster, nextStart);
-      }
-      _bgmTimer = setTimeout(tick, 600);
-    }
-    tick();
-  } catch(e) { _bgmOn = false; }
 }
 
 function stopBGM() {
   _bgmOn = false;
-  clearTimeout(_bgmTimer);
-  if (_bgmCtx) { _bgmCtx.close(); _bgmCtx = null; _bgmMaster = null; }
+  _bgmAudio.pause();
+  _bgmAudio.currentTime = 0;
   updateMuteBtn();
 }
 
